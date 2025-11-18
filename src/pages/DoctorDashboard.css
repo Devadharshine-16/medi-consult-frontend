@@ -1,0 +1,138 @@
+.doctor-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f2fe, #f0fdf4);
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .dashboard-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  
+  .dashboard-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2563eb;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Table */
+  .dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .dashboard-table thead {
+    background: #dbeafe;
+  }
+  
+  .dashboard-table th {
+    padding: 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #1e3a8a;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  
+  .dashboard-table td {
+    padding: 14px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    vertical-align: top;
+  }
+  
+  .dashboard-table tbody tr:hover {
+    background: #f9fafb;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .reason-cell {
+    color: #4b5563;
+    font-style: italic;
+  }
+  
+  /* Status */
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .status-pending {
+    background: #fef9c3;
+    color: #92400e;
+  }
+  
+  .status-confirmed {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  .status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  /* Buttons */
+  .actions {
+    text-align: center;
+  }
+  
+  .action-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin: 0 4px;
+  }
+  
+  .btn-confirm {
+    background: #22c55e;
+    color: white;
+  }
+  .btn-confirm:hover {
+    background: #16a34a;
+  }
+  
+  .btn-cancel {
+    background: #ef4444;
+    color: white;
+  }
+  .btn-cancel:hover {
+    background: #dc2626;
+  }
+  
+  .btn-reset {
+    background: #6b7280;
+    color: white;
+  }
+  .btn-reset:hover {
+    background: #4b5563;
+  }
+  
+  /* Fade animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
