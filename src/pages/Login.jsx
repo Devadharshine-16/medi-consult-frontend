@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -23,7 +23,6 @@ function Login() {
 
       setMessage("✅ Login successful!");
       setTimeout(() => navigate("/dashboard"), 1200);
-
     } catch (err) {
       setMessage("❌ Invalid email or password");
     }
@@ -31,42 +30,65 @@ function Login() {
     setIsLoading(false);
   };
 
+  const messageType = message.startsWith("✅") ? "success" : "error";
+
   return (
-    <div className="login-container">
-      <div className="login-card glass fade-in-up">
-        <h2>Welcome Back</h2>
-        <p>Sign in to continue</p>
+    <div className="auth-page">
+      <div className="auth-card glass fade-in-up">
+        <div className="auth-header">
+          <p className="auth-badge">Welcome Back</p>
+          <h2 className="auth-title">Sign in to MediCare+</h2>
+          <p className="auth-subtitle">
+            Manage appointments, continue consultations, and keep track of prescriptions in one secure place.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="login-email">Email Address</label>
+            <input
+              id="login-email"
+              className="auth-input"
+              type="email"
+              name="email"
+              placeholder="you@medicare.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div className="form-group">
+            <label htmlFor="login-password">Password</label>
+            <input
+              id="login-password"
+              className="auth-input"
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <button disabled={isLoading}>
-            {isLoading ? "Signing In..." : "Sign In"}
+          <button className="auth-button" disabled={isLoading}>
+            {isLoading ? "Signing In..." : "Sign in"}
           </button>
         </form>
 
-        {message && <p>{message}</p>}
+        {message && (
+          <p className={`auth-message ${messageType}`}>
+            {message}
+          </p>
+        )}
 
-        <p>
-          Don’t have an account?  
-          <a href="/register">Register</a>
-        </p>
+        <div className="auth-footer">
+          <span>Don’t have an account?</span>
+          <Link to="/register" className="auth-link">
+            Create one
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [form, setForm] = useState({
@@ -29,9 +29,7 @@ function Register() {
     try {
       await api.post("/auth/register", form);
       setMessage("✅ Registration successful!");
-
       setTimeout(() => navigate("/login"), 1200);
-
     } catch (err) {
       setMessage(err.response?.data?.msg || "❌ Error registering");
     }
@@ -39,59 +37,97 @@ function Register() {
     setIsLoading(false);
   };
 
+  const messageType = message.startsWith("✅") ? "success" : "error";
+
   return (
-    <div className="login-container">
-      <div className="login-card glass">
-        <h2>Create Account</h2>
+    <div className="auth-page">
+      <div className="auth-card glass fade-in-up">
+        <div className="auth-header">
+          <p className="auth-badge">Join MediCare+</p>
+          <h2 className="auth-title">Create Account</h2>
+          <p className="auth-subtitle">
+            Set up your secure medical profile to book appointments, chat with doctors, and order medicines anytime.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input
+                id="name"
+                className="auth-input"
+                type="text"
+                name="name"
+                placeholder="Dr. Jane Doe"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                id="email"
+                className="auth-input"
+                type="email"
+                name="email"
+                placeholder="you@medicare.com"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                className="auth-input"
+                type="password"
+                name="password"
+                placeholder="Create a strong password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                className="auth-input"
+                type="password"
+                name="confirmPassword"
+                placeholder="Re-enter your password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
 
-          <button disabled={isLoading}>
-            {isLoading ? "Creating..." : "Register"}
+          <button className="auth-button" disabled={isLoading}>
+            {isLoading ? "Creating..." : "Create account"}
           </button>
         </form>
 
-        {message && <p>{message}</p>}
+        {message && (
+          <p className={`auth-message ${messageType}`}>
+            {message}
+          </p>
+        )}
 
-        <p>
-          Already have an account?  
-          <a href="/login">Login</a>
-        </p>
+        <div className="auth-footer">
+          <span>Already have an account?</span>
+          <Link to="/login" className="auth-link">
+            Sign in
+          </Link>
+        </div>
       </div>
     </div>
   );

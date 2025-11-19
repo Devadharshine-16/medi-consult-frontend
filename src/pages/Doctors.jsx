@@ -1,9 +1,11 @@
 // src/pages/Doctors.jsx
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 function Doctors() {
   const [search, setSearch] = useState("");
+  const [activeSpecialty, setActiveSpecialty] = useState("all");
+
   const doctors = [
     { 
       id: 1,
@@ -163,89 +165,207 @@ function Doctors() {
     }
   ];
 
-  // Filter doctors based on search
-  const filteredDoctors = doctors.filter(doctor =>
-    doctor.name.toLowerCase().includes(search.toLowerCase()) ||
-    doctor.specialty.toLowerCase().includes(search.toLowerCase()) ||
-    doctor.education.toLowerCase().includes(search.toLowerCase())
+  const specialtyFilters = useMemo(
+    () => Array.from(new Set(doctors.map((doctor) => doctor.specialty))),
+    []
   );
+
+  const spokenLanguages = useMemo(
+    () => new Set(doctors.flatMap((doctor) => doctor.languages)),
+    []
+  );
+
+  const averageRating = useMemo(
+    () => (doctors.reduce((sum, doctor) => sum + doctor.rating, 0) / doctors.length).toFixed(1),
+    []
+  );
+
+  const collectiveExperience = useMemo(
+    () =>
+      doctors.reduce((sum, doctor) => {
+        const years = parseInt(doctor.experience.replace(/\D/g, ""), 10);
+        return sum + (Number.isNaN(years) ? 0 : years);
+      }, 0),
+    []
+  );
+
+  const filteredDoctors = doctors
+    .filter((doctor) => {
+      const query = search.toLowerCase();
+      return (
+        doctor.name.toLowerCase().includes(query) ||
+        doctor.specialty.toLowerCase().includes(query) ||
+        doctor.education.toLowerCase().includes(query)
+      );
+    })
+    .filter((doctor) =>
+      activeSpecialty === "all" ? true : doctor.specialty === activeSpecialty
+    );
+
+  const heroStats = [
+    {
+      label: "Specialists",
+      value: doctors.length,
+      detail: `${specialtyFilters.length} specialties`,
+    },
+    {
+      label: "Languages",
+      value: spokenLanguages.size,
+      detail: "Supported for care",
+    },
+    {
+      label: "Avg. rating",
+      value: averageRating,
+      detail: "Patient satisfaction",
+    },
+    {
+      label: "Experience",
+      value: `${collectiveExperience}+ yrs`,
+      detail: "Combined expertise",
+    },
+  ];
   
   return (
-    <div className="container">
-      <div className="hero fade-in-up">
-        <h1>Our Expert Doctors</h1>
-        <p>Connect with highly qualified medical professionals who are committed to your health and well-being</p>
-      </div>
+    <div className="doctors-page">
+      <section className="doctors-hero glass fade-in-up">
+        <div className="doctors-hero-text">
+          <p className="page-badge">Meet our experts</p>
+          <h1>World-class doctors, ready when you are</h1>
+          <p className="hero-subtitle">
+            Browse top-rated specialists across every major field of medicine. Book an appointment or
+            start a secure chat in just a few taps.
+          </p>
+          <div className="doctors-hero-actions">
+            <Link to="/appointment-form" className="btn">
+              Book appointment
+            </Link>
+            <Link to="/doctors-consultation" className="btn btn-secondary">
+              Chat with doctors
+            </Link>
+          </div>
+        </div>
 
-      {/* Search Box */}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search by name, specialty, or education..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
-        />
-      </div>
-      
-      {filteredDoctors.length > 0 ? (
-        <div className="doctors-grid">
-          {filteredDoctors.map((doctor) => (
-            <div key={doctor.id} className="doctor-card card fade-in-up">
-              <div className="doctor-avatar">
-                <span className="doctor-image">{doctor.image}</span>
-              </div>
-              
-              <div className="doctor-info">
-                <h3>{doctor.name}</h3>
-                <p className="doctor-specialty">{doctor.specialty}</p>
-                <p className="doctor-education">{doctor.education}</p>
-                <p className="doctor-description">{doctor.description}</p>
-                
-                <div className="doctor-details">
-                  <div className="detail-item">
-                    <span className="detail-icon">🌐</span>
-                    <span className="detail-text">{doctor.languages.join(", ")}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">🕒</span>
-                    <span className="detail-text">{doctor.availability}</span>
-                  </div>
-                </div>
-                
-                <div className="doctor-stats">
-                  <div className="stat">
-                    <span className="stat-icon">⭐</span>
-                    <span className="stat-value">{doctor.rating}</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-icon">👥</span>
-                    <span className="stat-value">{doctor.patients}</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-icon">⏰</span>
-                    <span className="stat-value">{doctor.experience}</span>
-                  </div>
-                </div>
-                
-                <Link to={`/book-appointment?doctor=${doctor.id}`} className="btn">
-                  Book Appointment
-                </Link>
-              </div>
+        <div className="doctors-hero-stats">
+          {heroStats.map((stat) => (
+            <div key={stat.label} className="doctors-hero-stat">
+              <span>{stat.label}</span>
+              <strong>{stat.value}</strong>
+              <small>{stat.detail}</small>
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="doctors-toolbar glass">
+        <div className="doctors-search">
+          <input
+            type="text"
+            placeholder="Search by name, specialty, or education..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
+            <button onClick={() => setSearch("")} aria-label="Clear search">
+              ✕
+            </button>
+          )}
+        </div>
+
+        <div className="doctors-filters">
+          <button
+            className={`filter-chip ${activeSpecialty === "all" ? "active" : ""}`}
+            onClick={() => setActiveSpecialty("all")}
+          >
+            All specialties
+          </button>
+          {specialtyFilters.map((specialty) => (
+            <button
+              key={specialty}
+              className={`filter-chip ${activeSpecialty === specialty ? "active" : ""}`}
+              onClick={() => setActiveSpecialty(specialty)}
+            >
+              {specialty}
+            </button>
+          ))}
+        </div>
+      </section>
+      
+      {filteredDoctors.length > 0 ? (
+        <div className="doctors-card-grid">
+          {filteredDoctors.map((doctor) => (
+            <article key={doctor.id} className="doctor-profile-card glass fade-in-up">
+              <header className="doctor-card-header">
+                <div className="doctor-card-avatar">{doctor.image}</div>
+                <div>
+                  <h3>{doctor.name}</h3>
+                  <p className="doctor-specialty-chip">{doctor.specialty}</p>
+                  <p className="doctor-education">{doctor.education}</p>
+                </div>
+                <span className="doctor-rating-chip">⭐ {doctor.rating}</span>
+              </header>
+
+              <p className="doctor-description">{doctor.description}</p>
+
+              <div className="doctor-meta-grid">
+                <div className="doctor-meta">
+                  <span>Experience</span>
+                  <strong>{doctor.experience}</strong>
+                </div>
+                <div className="doctor-meta">
+                  <span>Patients helped</span>
+                  <strong>{doctor.patients}</strong>
+                </div>
+                <div className="doctor-meta">
+                  <span>Availability</span>
+                  <strong>{doctor.availability}</strong>
+                </div>
+              </div>
+
+              <div className="doctor-languages">
+                {doctor.languages.map((language) => (
+                  <span key={language} className="doctor-language-chip">
+                    {language}
+                  </span>
+                ))}
+              </div>
+
+              <footer className="doctor-card-footer">
+                <div className="doctor-availability">
+                  <span>🗓</span>
+                  <div>
+                    <p>Next available</p>
+                    <strong>{doctor.availability}</strong>
+                  </div>
+                </div>
+                <Link
+                  to={`/book-appointment?doctor=${doctor.id}`}
+                  className="doctor-card-btn btn"
+                >
+                  Book with {doctor.name.split(" ")[1]}
+                </Link>
+              </footer>
+            </article>
+          ))}
+        </div>
       ) : (
-        <div className="no-results">
+        <div className="doctors-empty glass">
           <div className="no-results-icon">🔍</div>
           <h3>No doctors found</h3>
-          <p>Try adjusting your search terms or browse all our doctors</p>
-          <button 
-            onClick={() => setSearch("")} 
-            className="btn btn-secondary"
-          >
-            Clear Search
-          </button>
+          <p>Try refining your search or reset the filters to browse all specialists.</p>
+          <div className="doctors-empty-actions">
+            <button
+              onClick={() => setSearch("")}
+              className="btn btn-secondary"
+            >
+              Clear search
+            </button>
+            <button
+              onClick={() => setActiveSpecialty("all")}
+              className="btn"
+            >
+              Reset filters
+            </button>
+          </div>
         </div>
       )}
     </div>

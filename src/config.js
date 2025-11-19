@@ -1,5 +1,6 @@
 // API Configuration
-export const API_BASE_URL = 'https://medical-consultation-backend-1.onrender.com';
+export const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 // API Endpoints
 export const API_ENDPOINTS = {
